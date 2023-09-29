@@ -5,7 +5,6 @@ int n = 0;
 String ssid = "";
 String pass = "";
 
-
 void wifiScan(void)
 {
   Serial.println("\nScan Started");

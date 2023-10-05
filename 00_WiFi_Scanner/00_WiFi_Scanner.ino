@@ -2,12 +2,15 @@
 
 int n = 0;
 String ssid = "";
+String sudo_ssid = "sudo";
 String pass = "";
 
+
+char ConnectionFlag = 0;
 unsigned long pMillis = 0;
 unsigned long cMillis = 0;
 unsigned long interval = 5000;
-char ConnectionFlag = 0;
+
 
 void wifiScan(void)
 {
@@ -61,15 +64,17 @@ void WiFi_Init(void)
   if(WiFi.status() != WL_CONNECTED && WiFi.status() != WL_NO_SSID_AVAIL)
   {
       Serial.println("Password is not correct");
+      ESP.restart();
   }
   else if(WiFi.status() != WL_CONNECTED && WiFi.status() == WL_NO_SSID_AVAIL)
   {
       Serial.println("Wifi network is not avaliable");
+      ESP.restart();
   }
   else
   {
       Serial.println("\nConnected to Wi-Fi!");
-      Serial.print("IP address : ");
+      Serial.print("IP address: ");
       Serial.println(WiFi.localIP());
   }
 }

@@ -5,6 +5,13 @@ String ssid = "";
 String sudo_ssid = "sudo";
 String pass = "";
 
+
+char ConnectionFlag = 0;
+unsigned long pMillis = 0;
+unsigned long cMillis = 0;
+unsigned long interval = 5000;
+
+
 void wifiScan(void)
 {
   Serial.println("\nScan Started");
@@ -57,16 +64,19 @@ void WiFi_Init(void)
   if(WiFi.status() != WL_CONNECTED && WiFi.status() != WL_NO_SSID_AVAIL)
   {
       Serial.println("Password is not correct");
+      ESP.restart();
   }
   else if(WiFi.status() != WL_CONNECTED && WiFi.status() == WL_NO_SSID_AVAIL)
   {
       Serial.println("Wifi network is not avaliable");
+      ESP.restart();
   }
   else
   {
       Serial.println("\nConnected to Wi-Fi!");
       Serial.print("IP address: ");
       Serial.println(WiFi.localIP());
+      repeater_Init();
   }
 }
 
@@ -120,12 +130,32 @@ void setup()
   Serial.begin(115200);
   wifiScan();
   WiFi_Init();
-  repeater_Init();
 }
 
 
 void loop() 
 {
+  cMillis = millis();
 
+  if ((WiFi.status() != WL_CONNECTED) &&
+      (cMillis - pMillis >= interval))
+      {
+        ConnectionFlag = 1;
+        Serial.println("Reconnecting to WiFi ...");
+        WiFi.disconnect();
+        WiFi.reconnect();
+        pMillis = cMillis;
+      }
+      else if((WiFi.status() == WL_CONNECTED) &&
+              (ConnectionFlag==1))
+              {
+                  ConnectionFlag = 0;
+                  Serial.println("\nReconnected to WiFi.");
+                  Serial.print("Host IP address : ");
+                  Serial.println(WiFi.localIP());
+                  Serial.print("Access Point IP address : ");
+                  Serial.println(WiFi.softAPIP());
+              }
+  
 }
 

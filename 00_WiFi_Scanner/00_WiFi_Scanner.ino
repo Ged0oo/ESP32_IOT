@@ -4,6 +4,11 @@ int n = 0;
 String ssid = "";
 String pass = "";
 
+unsigned long pMillis = 0;
+unsigned long cMillis = 0;
+unsigned long interval = 5000;
+char ConnectionFlag = 0;
+
 void wifiScan(void)
 {
   Serial.println("\nScan Started");
@@ -64,7 +69,7 @@ void WiFi_Init(void)
   else
   {
       Serial.println("\nConnected to Wi-Fi!");
-      Serial.print("IP address: ");
+      Serial.print("IP address : ");
       Serial.println(WiFi.localIP());
   }
 }
@@ -76,7 +81,7 @@ void wifiConnection(int no_ssid)
 
     if((WiFi.encryptionType(no_ssid - 1) != WIFI_AUTH_OPEN))
     {
-        Serial.print("Enter Wi-Fi password: ");
+        Serial.print("Enter Wi-Fi password : ");
         while (true)
         {
           while (!Serial.available()) 
@@ -115,6 +120,23 @@ void setup()
 
 void loop() 
 {
+  cMillis = millis();
 
+  if ((WiFi.status() != WL_CONNECTED) &&
+      (cMillis - pMillis >= interval))
+      {
+        ConnectionFlag = 1;
+        Serial.println("Reconnecting to WiFi ...");
+        WiFi.disconnect();
+        WiFi.reconnect();
+        pMillis = cMillis;
+      }
+      else if((WiFi.status() == WL_CONNECTED) &&
+              (ConnectionFlag==1))
+              {
+                  ConnectionFlag = 0;
+                  Serial.println("\nReconnected to WiFi.");
+                  Serial.print("IP address : ");
+                  Serial.println(WiFi.localIP());
+              }
 }
-

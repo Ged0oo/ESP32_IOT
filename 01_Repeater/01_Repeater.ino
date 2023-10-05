@@ -2,6 +2,7 @@
 
 int n = 0;
 String ssid = "";
+String sudo_ssid = "sudo";
 String pass = "";
 
 void wifiScan(void)
@@ -76,7 +77,7 @@ void wifiConnection(int no_ssid)
 
     if((WiFi.encryptionType(no_ssid - 1) != WIFI_AUTH_OPEN))
     {
-        Serial.print("Enter Wi-Fi password: ");
+        Serial.print("Enter Wi-Fi password : ");
         while (true)
         {
           while (!Serial.available()) 
@@ -105,13 +106,23 @@ void wifiConnection(int no_ssid)
 }
 
 
+void repeater_Init(void)
+{
+  WiFi.softAP(sudo_ssid, pass);
+  IPAddress IP = WiFi.softAPIP();
+  Serial.print("Access Point IP address : ");
+  Serial.println(IP);
+}
+
+
 void setup() 
 {
   Serial.begin(115200);
   wifiScan();
   WiFi_Init();
-  
+  repeater_Init();
 }
+
 
 void loop() 
 {

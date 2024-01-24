@@ -1,5 +1,5 @@
 /*
-*   NTP Server
+*   HTTP Server Requests
 */
 
 #include <WiFi.h>
